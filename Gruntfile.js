@@ -10,9 +10,7 @@ var js = {};
     }
     return arr;
   }
-  js.main = get([
-    'main'
-  ]);
+  js.main = get([ 'main' ]);
 })();
 module.exports = function(grunt) {
   // Project configuration.
@@ -33,7 +31,7 @@ module.exports = function(grunt) {
     watch: {
       main : {
         files: js.main,
-        tasks: ['uglify:main', 'concat'],
+        tasks: ['uglify:main'],
         options: {}
       }
     }

@@ -1,3 +1,5 @@
+fs = require('fs');
+
 function matchFile(dir, match, callback) {
   var files = fs.readdirSync(dir);
   files.forEach(function (fileName) {
