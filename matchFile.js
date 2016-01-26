@@ -84,3 +84,7 @@ function matchFile(dir, match, callback) {
   }
   return fileList;
 }
+
+if (typeof module === 'object') {
+  module.exports = matchFile;
+}
