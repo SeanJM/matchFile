@@ -1,5 +1,5 @@
 {
-  "name": "match-file",
+  "name": "match-file-utility",
   "title": "Match File",
   "description": "A way to match files which returns an array",
   "version": "0.0.0",
@@ -31,7 +31,7 @@
     "grunt-autoprefixer": "^1.0.0",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-concat": "^0.5.1",
-    "grunt-contrib-uglify": "~0.5.0",
+    "grunt-contrib-uglify": "^0.11.0",
     "grunt-contrib-watch": "^0.6.1",
     "mocha": "^2.3.4"
   }
