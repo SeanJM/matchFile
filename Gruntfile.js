@@ -1,17 +1,3 @@
-var js = {};
-(function () {
-  var lib = {
-    main : [ 'matchFile.js' ]
-  };
-  function get(files) {
-    var arr = [];
-    for (var i = 0, n = files.length; i < n; i++) {
-      arr = arr.concat(lib[files[i]]);
-    }
-    return arr;
-  }
-  js.main = get([ 'main' ]);
-})();
 module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
@@ -24,23 +10,33 @@ module.exports = function(grunt) {
       },
       main : {
         files: {
-          'matchFile.min.js': js.main,
+          'matchFile.min.js': [ 'src/matchFile.js', 'src/matchFile.fn.*.js', 'src/init.js' ],
+        }
+      }
+    },
+    concat: {
+      options: {
+        sourceMap: false,
+        mangle: true
+      },
+      main : {
+        files: {
+          'matchFile.js': [ 'src/matchFile.js', 'src/matchFile.fn.*.js', 'src/init.js' ],
         }
       }
     },
     watch: {
       main : {
-        files: js.main,
+        files: [ 'src/matchFile.js', 'src/matchFile.fn.*.js', 'last.js' ],
         tasks: ['uglify:main'],
         options: {}
       }
     }
   });
-
   // Load the plugin that provides the "uglify" task.
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
   // Default task(s).
-  grunt.registerTask('default', ['uglify', 'watch']);
+  grunt.registerTask('default', ['uglify', 'concat', 'watch']);
 };
