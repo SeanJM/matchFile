@@ -33,14 +33,16 @@ matchFile.fn.smartSort = function (fileList) {
     var bDir = path.dirname(b);
     var aFilename = path.basename(a);
     var bFilename = path.basename(b);
+    var aChunk = aFilename.match(/[a-zA-Z0-9]+/g);
+    var bChunk = bFilename.match(/[a-zA-Z0-9]+/g);
     if (aDir === bDir) {
       if (/^init\.[a-z]+$/.test(aFilename)) {
         return 1;
       } else if (/^init\.[a-z]+$/.test(bFilename)) {
         return -1;
-      } else if (aFilename.length > bFilename.length) {
+      } else if (aChunk.length > bChunk.length) {
         return 1;
-      } else if (aFilename.length < bFilename.length) {
+      } else if (aChunk.length < bChunk.length) {
         return -1;
       } else if (a.filename > b.filename) {
         return 1;
