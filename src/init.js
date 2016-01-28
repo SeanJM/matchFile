@@ -1,7 +1,10 @@
 (function () {
-  var fileList = [];
-  matchFile.chain = function (dir, match) {
-    fileList.splice(0);
+  var m = {
+    value : [],
+    operations : []
+  };
+  matchFile.find = function (dir, match) {
+    var list = [];
     function getMatch(dir) {
       var files = fs.readdirSync(dir);
       files.forEach(function (name) {
@@ -14,18 +17,30 @@
           if (m.length > 1) {
             m = m.slice(1);
           }
-          fileList.push(filename);
+          list.push(filename);
         }
       });
     }
     getMatch(dir);
-    return fileList;
+    return list;
+  }
+  matchFile.chain = function (dir, match) {
+    m.value = matchFile.find(dir, match);
+    return m;
   }
   for (var f in matchFile.fn) {
-    fileList[f] = function (f) {
+    m[f] = function (f) {
       return function () {
-        matchFile.fn[f].apply(null, [fileList].concat([].slice.call(arguments)));
-        return fileList;
+        if (f === 'pipe') {
+          m.value = matchFile.fn[f].apply(null, [m].concat([].slice.call(arguments)));
+        } else {
+          m.operations.push({
+            name : f,
+            arguments : [].slice.call(arguments)
+          });
+          m.value = matchFile.fn[f].apply(null, [m.value].concat([].slice.call(arguments)));
+        }
+        return m;
       };
     }(f);
   }

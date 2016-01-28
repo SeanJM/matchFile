@@ -1,5 +1,5 @@
-matchFile.fn.rename = function (fileList, toName) {
-  fileList.forEach(function (filename, i) {
+matchFile.fn.rename = function (array, toName) {
+  array.forEach(function (filename, i) {
     var newName = toName.replace(/\$([a-zA-Z0-9]+)/g, function (x, y) {
       if (y === 'dir') {
         return path.dirname(y);
@@ -12,4 +12,5 @@ matchFile.fn.rename = function (fileList, toName) {
     fs.rename(filename, newName);
     fileObject[i] = newName;
   });
+  return array;
 };

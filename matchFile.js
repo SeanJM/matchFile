@@ -11,8 +11,20 @@ if (typeof module === 'object') {
   module.exports = matchFile;
 }
 
-matchFile.fn.rename = function (fileList, toName) {
-  fileList.forEach(function (filename, i) {
+matchFile.fn.pipe = function (m, dir, match) {
+  var pipeList = matchFile.find(dir, match);
+  var f;
+  var a;
+  for (var i = 0, n = fileList.operations.length; i < n; i++) {
+    f = matchFile.fn[fileList.operations[i].name];
+    a = fileList.operations[i].arguments;
+    f.apply(null, pipeList, a);
+  }
+  return pipeList;
+};
+
+matchFile.fn.rename = function (array, toName) {
+  array.forEach(function (filename, i) {
     var newName = toName.replace(/\$([a-zA-Z0-9]+)/g, function (x, y) {
       if (y === 'dir') {
         return path.dirname(y);
@@ -25,9 +37,10 @@ matchFile.fn.rename = function (fileList, toName) {
     fs.rename(filename, newName);
     fileObject[i] = newName;
   });
+  return array;
 };
 
-matchFile.fn.smartSort = function (fileList) {
+matchFile.fn.smartSort = function (array) {
   function sameChunk(aC, bC) {
     if (aC.length > 2 && aC.length === bC.length) {
       if (aC.slice(0, -2).join('') === bC.slice(0, -2).join('')) {
@@ -83,7 +96,7 @@ matchFile.fn.smartSort = function (fileList) {
     }
     return -1;
   }
-  fileList.sort(function (a, b) {
+  array.sort(function (a, b) {
     var aDirLength = a.split(path.sep).length;
     var bDirLength = b.split(path.sep).length;
     if (aDirLength !== bDirLength) {
@@ -91,12 +104,16 @@ matchFile.fn.smartSort = function (fileList) {
     }
     return getSortIndex(a, b);
   });
+  return array;
 };
 
 (function () {
-  var fileList = [];
-  matchFile.chain = function (dir, match) {
-    fileList.splice(0);
+  var m = {
+    value : [],
+    operations : []
+  };
+  matchFile.find = function (dir, match) {
+    var list = [];
     function getMatch(dir) {
       var files = fs.readdirSync(dir);
       files.forEach(function (name) {
@@ -109,18 +126,30 @@ matchFile.fn.smartSort = function (fileList) {
           if (m.length > 1) {
             m = m.slice(1);
           }
-          fileList.push(filename);
+          list.push(filename);
         }
       });
     }
     getMatch(dir);
-    return fileList;
+    return list;
+  }
+  matchFile.chain = function (dir, match) {
+    m.value = matchFile.find(dir, match);
+    return m;
   }
   for (var f in matchFile.fn) {
-    fileList[f] = function (f) {
+    m[f] = function (f) {
       return function () {
-        matchFile.fn[f].apply(null, [fileList].concat([].slice.call(arguments)));
-        return fileList;
+        if (f === 'pipe') {
+          m.value = matchFile.fn[f].apply(null, [m].concat([].slice.call(arguments)));
+        } else {
+          m.operations.push({
+            name : f,
+            arguments : [].slice.call(arguments)
+          });
+          m.value = matchFile.fn[f].apply(null, [m.value].concat([].slice.call(arguments)));
+        }
+        return m;
       };
     }(f);
   }

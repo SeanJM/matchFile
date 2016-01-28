@@ -1,4 +1,4 @@
-matchFile.fn.smartSort = function (fileList) {
+matchFile.fn.smartSort = function (array) {
   function sameChunk(aC, bC) {
     if (aC.length > 2 && aC.length === bC.length) {
       if (aC.slice(0, -2).join('') === bC.slice(0, -2).join('')) {
@@ -54,7 +54,7 @@ matchFile.fn.smartSort = function (fileList) {
     }
     return -1;
   }
-  fileList.sort(function (a, b) {
+  array.sort(function (a, b) {
     var aDirLength = a.split(path.sep).length;
     var bDirLength = b.split(path.sep).length;
     if (aDirLength !== bDirLength) {
@@ -62,4 +62,5 @@ matchFile.fn.smartSort = function (fileList) {
     }
     return getSortIndex(a, b);
   });
+  return array;
 };
