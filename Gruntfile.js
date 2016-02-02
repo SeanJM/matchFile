@@ -21,7 +21,7 @@ module.exports = function(grunt) {
       },
       main : {
         files: {
-          'matchFile.js': [ 'src/matchFile.js', 'src/matchFile.fn.*.js', 'src/init.js' ],
+          'matchFile.js': [ 'src/matchFile.js', 'src/matchFile.find.js', 'src/matchFile.fn.*.js', 'src/init.js' ],
         }
       }
     },

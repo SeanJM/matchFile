@@ -1,8 +1,6 @@
 (function () {
-  var m = {
-    value : [],
-    operations : []
-  };
+  var x = [];
+  x.operations = [];
   matchFile.find = function (dir, match) {
     var list = [];
     function getMatch(dir) {
@@ -23,24 +21,25 @@
     }
     getMatch(dir);
     return list;
-  }
+  };
   matchFile.chain = function (dir, match) {
-    m.value = matchFile.find(dir, match);
-    return m;
+    [].splice.apply(x, [0, x.length].concat(matchFile.find(dir, match)));
+    return x;
   }
   for (var f in matchFile.fn) {
-    m[f] = function (f) {
+    x[f] = function (f) {
       return function () {
+        console.log(f);
         if (f === 'pipe') {
-          m.value = matchFile.fn[f].apply(null, [m].concat([].slice.call(arguments)));
+          x.push.apply(x, matchFile.fn[f].apply(null, [x].concat([].slice.call(arguments))));
         } else {
-          m.operations.push({
+          x.operations.push({
             name : f,
             arguments : [].slice.call(arguments)
           });
-          m.value = matchFile.fn[f].apply(null, [m.value].concat([].slice.call(arguments)));
+          [].splice.apply(x, [0, x.length].concat(matchFile.fn[f].apply(null, [x].concat([].slice.call(arguments)))));
         }
-        return m;
+        return x;
       };
     }(f);
   }
