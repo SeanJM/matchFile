@@ -29,7 +29,6 @@
   for (var f in matchFile.fn) {
     x[f] = function (f) {
       return function () {
-        console.log(f);
         if (f === 'pipe') {
           x.push.apply(x, matchFile.fn[f].apply(null, [x].concat([].slice.call(arguments))));
         } else {
