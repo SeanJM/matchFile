@@ -138,15 +138,15 @@ matchFile.fn.smartSort = function (array) {
   for (var f in matchFile.fn) {
     x[f] = function (f) {
       return function () {
-        console.log(f);
+        var a = matchFile.fn[f].apply(null, [x].concat([].slice.call(arguments)));
         if (f === 'pipe') {
-          x.push.apply(x, matchFile.fn[f].apply(null, [x].concat([].slice.call(arguments))));
+          x.push.apply(x, a);
         } else {
           x.operations.push({
             name : f,
             arguments : [].slice.call(arguments)
           });
-          [].splice.apply(x, [0, x.length].concat(matchFile.fn[f].apply(null, [x].concat([].slice.call(arguments)))));
+          [].splice.apply(x, [0, x.length].concat(a));
         }
         return x;
       };
