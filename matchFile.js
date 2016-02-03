@@ -100,7 +100,12 @@ matchFile.fn.smartSort = function (array) {
     var aDirLength = a.split(path.sep).length;
     var bDirLength = b.split(path.sep).length;
     if (aDirLength !== bDirLength) {
-      return aDirLength - bDirLength;
+      if (a > b) {
+        return -1;
+      } else if (b > a) {
+        return 1;
+      }
+      return 0;
     }
     return getSortIndex(a, b);
   });
