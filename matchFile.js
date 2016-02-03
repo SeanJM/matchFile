@@ -71,41 +71,42 @@ matchFile.fn.smartSort = function (array) {
     var bFilename = path.basename(b);
     var aC = aFilename.match(/[a-zA-Z0-9]+/g);
     var bC = bFilename.match(/[a-zA-Z0-9]+/g);
-    if (aDir === bDir) {
-      if (/^init\.[a-z]+$/.test(aFilename)) {
-        return 1;
-      }
-      if (/^init\.[a-z]+$/.test(bFilename)) {
-        return -1;
-      }
-      if (aC.length === bC.length) {
-        return sameChunk(aC, bC);
-      }
-      if (aC.length > bC.length) {
-        return 1;
-      }
-      if (aC.length < bC.length) {
-        return -1;
-      }
-      if (aFilename > bFilename) {
-        return 1;
-      }
+    if (/^init\.[a-z]+$/.test(aFilename)) {
+      return 1;
+    }
+    if (/^init\.[a-z]+$/.test(bFilename)) {
       return -1;
-    } else if (aDir > bDir) {
+    }
+    if (aC.length === bC.length) {
+      return sameChunk(aC, bC);
+    }
+    if (aC.length > bC.length) {
+      return 1;
+    }
+    if (aC.length < bC.length) {
+      return -1;
+    }
+    if (aFilename > bFilename) {
       return 1;
     }
     return -1;
   }
+  function sortRoot(a, b) {
+    var aDirSep = a.split(path.sep);
+    var bDirSep = b.split(path.sep);
+    if (aDirSep.slice(-2).join(path.sep) === bDirSep.slice(-1).join(path.sep)) {
+      return 1;
+    } else if (bDirSep.slice(-2).join(path.sep) === aDirSep.slice(-1).join(path.sep)) {
+      return -1;
+    }
+    if (a > b) {
+      return -1;
+    }
+    return 1;
+  }
   array.sort(function (a, b) {
-    var aDirLength = a.split(path.sep).length;
-    var bDirLength = b.split(path.sep).length;
-    if (aDirLength !== bDirLength) {
-      if (a > b) {
-        return -1;
-      } else if (b > a) {
-        return 1;
-      }
-      return 0;
+    if (path.dirname(a) !== path.dirname(b)) {
+      sortRoot(a, b);
     }
     return getSortIndex(a, b);
   });

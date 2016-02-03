@@ -22,9 +22,7 @@ matchFile.fn.smartSort = function (array) {
     }
     return -1;
   }
-  function getSortIndex(a, b) {
-    var aDir = path.dirname(a);
-    var bDir = path.dirname(b);
+  function getSameDirSortIndex(a, b) {
     var aFilename = path.basename(a);
     var bFilename = path.basename(b);
     var aC = aFilename.match(/[a-zA-Z0-9]+/g);
@@ -49,19 +47,25 @@ matchFile.fn.smartSort = function (array) {
     }
     return -1;
   }
-  array.sort(function (a, b) {
-    var aDir = path.dirname(a);
-    var bDir = path.dirname(b);
-    if (aDir !== bDir) {
-      if (a > b) {
-        return 1;
-      }
-      if (b > a) {
-        return -1;
-      }
-      return 0;
+  function getDifferentDirSortIndex(a, b) {
+    var aSplit = a.split(path.sep);
+    var bSplit = b.split(path.sep);
+    if (aSplit.slice(0, -2).join(path.sep) === bSplit.slice(0, -1).join(path.sep)) {
+      return 1;
+    } else if (aSplit.slice(0, -1).join(path.sep) === bSplit.slice(0, -2).join(path.sep)) {
+      return -1;
+    } else if (a > b) {
+      return 1;
+    } else if (a < b) {
+      return -1;
     }
-    return getSortIndex(a, b);
+  }
+  array.sort(function (a, b) {
+    if (path.dirname(a) === path.dirname(b)) {
+      return getSameDirSortIndex(a, b);
+    } else {
+      return getDifferentDirSortIndex(a, b);
+    }
   });
   return array;
 };
