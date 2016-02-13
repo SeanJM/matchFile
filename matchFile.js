@@ -25,17 +25,18 @@ matchFile.fn.pipe = function (x, dir, match) {
 
 matchFile.fn.rename = function (array, toName) {
   array.forEach(function (filename, i) {
+    var match = path.basename(filename).match(array.match);
     var newName = toName.replace(/\$([a-zA-Z0-9]+)/g, function (x, y) {
       if (y === 'dir') {
-        return path.dirname(y);
+        return path.dirname(filename);
       } else if (y === 'filename') {
-        return path.basename(y);
+        return path.basename(filename);
       } else if (!isNaN(Number(y))) {
-        return m[Number(y + 1)];
+        return match[Number(y)];
       }
     });
     fs.rename(filename, newName);
-    fileObject[i] = newName;
+    array[i] = newName;
   });
   return array;
 };
@@ -64,9 +65,7 @@ matchFile.fn.smartSort = function (array) {
     }
     return -1;
   }
-  function getSortIndex(a, b) {
-    var aDir = path.dirname(a);
-    var bDir = path.dirname(b);
+  function getSameDirSortIndex(a, b) {
     var aFilename = path.basename(a);
     var bFilename = path.basename(b);
     var aC = aFilename.match(/[a-zA-Z0-9]+/g);
@@ -91,24 +90,25 @@ matchFile.fn.smartSort = function (array) {
     }
     return -1;
   }
-  function sortRoot(a, b) {
-    var aDirSep = a.split(path.sep);
-    var bDirSep = b.split(path.sep);
-    if (aDirSep.slice(-2).join(path.sep) === bDirSep.slice(-1).join(path.sep)) {
+  function getDifferentDirSortIndex(a, b) {
+    var aSplit = a.split(path.sep);
+    var bSplit = b.split(path.sep);
+    if (aSplit.slice(0, -2).join(path.sep) === bSplit.slice(0, -1).join(path.sep)) {
       return 1;
-    } else if (bDirSep.slice(-2).join(path.sep) === aDirSep.slice(-1).join(path.sep)) {
+    } else if (aSplit.slice(0, -1).join(path.sep) === bSplit.slice(0, -2).join(path.sep)) {
+      return -1;
+    } else if (a > b) {
+      return 1;
+    } else if (a < b) {
       return -1;
     }
-    if (a > b) {
-      return -1;
-    }
-    return 1;
   }
   array.sort(function (a, b) {
-    if (path.dirname(a) !== path.dirname(b)) {
-      sortRoot(a, b);
+    if (path.dirname(a) === path.dirname(b)) {
+      return getSameDirSortIndex(a, b);
+    } else {
+      return getDifferentDirSortIndex(a, b);
     }
-    return getSortIndex(a, b);
   });
   return array;
 };
@@ -139,6 +139,7 @@ matchFile.fn.smartSort = function (array) {
   };
   matchFile.chain = function (dir, match) {
     [].splice.apply(x, [0, x.length].concat(matchFile.find(dir, match)));
+    x.match = match;
     return x;
   }
   for (var f in matchFile.fn) {

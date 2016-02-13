@@ -24,6 +24,7 @@
   };
   matchFile.chain = function (dir, match) {
     [].splice.apply(x, [0, x.length].concat(matchFile.find(dir, match)));
+    x.match = match;
     return x;
   }
   for (var f in matchFile.fn) {
