@@ -1,3 +1,9 @@
+var js = [
+  'src/matchFile.js',
+  'src/matchFile.chain.js',
+  'src/matchFile.find.js',
+  'src/matchFile.fn.*.js'
+];
 module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
@@ -10,7 +16,7 @@ module.exports = function(grunt) {
       },
       main : {
         files: {
-          'matchFile.min.js': [ 'src/matchFile.js', 'src/matchFile.fn.*.js', 'src/init.js' ],
+          'matchFile.min.js': js,
         }
       }
     },
@@ -21,13 +27,13 @@ module.exports = function(grunt) {
       },
       main : {
         files: {
-          'matchFile.js': [ 'src/matchFile.js', 'src/matchFile.find.js', 'src/matchFile.fn.*.js', 'src/init.js' ],
+          'matchFile.js': js,
         }
       }
     },
     watch: {
       main : {
-        files: [ 'src/matchFile.js', 'src/matchFile.fn.*.js', 'last.js' ],
+        files: js,
         tasks: ['uglify:main'],
         options: {}
       }
