@@ -59,6 +59,18 @@ matchFile.find = function (dir, match) {
   return list;
 };
 
+matchFile.fn.filter = function (array, predicate) {
+  var i = array.length - 1;
+
+  for (; i >= 0; i--) {
+    if (!predicate(array[i], i, array)) {
+      array.splice(i, 1);
+    }
+  }
+
+  return array;
+};
+
 matchFile.fn.pipe = function (x, dir, match) {
   var pipeList = matchFile.find(dir, match);
   var f;
