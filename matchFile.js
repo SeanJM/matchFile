@@ -111,6 +111,12 @@ matchFile.fn.smartSort = function (array) {
         if (bC.slice(-2)[0] === 'min') {
           return 1;
         }
+        if (aC.slice(-2)[0] === 'mobile') {
+          return 1;
+        }
+        if (bC.slice(-2)[0] === 'mobile') {
+          return -1;
+        }
         if (aC.slice(-2).join('') > bC.slice(-2).join('')) {
           return 1;
         }
