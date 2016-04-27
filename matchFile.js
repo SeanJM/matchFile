@@ -159,6 +159,13 @@ matchFile.fn.smartSort = function (array) {
   function getDifferentDirSortIndex(a, b) {
     var aSplit = a.split(path.sep);
     var bSplit = b.split(path.sep);
+
+    if (aSplit.slice(0, -1) === 'scripts' && bSplit.slice(0, -1) === 'components') {
+      return -1;
+    } else if (bSplit.slice(0, -1) === 'scripts' && aSplit.slice(0, -1) === 'components') {
+      return 1;
+    }
+
     if (aSplit.slice(0, -2).join(path.sep) === bSplit.slice(0, -1).join(path.sep)) {
       return 1;
     } else if (aSplit.slice(0, -1).join(path.sep) === bSplit.slice(0, -2).join(path.sep)) {
