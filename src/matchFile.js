@@ -1,31 +1,58 @@
 fs = require('fs');
 path = require('path');
 
-function matchFile(dir, match) {
-  var x = [];
-  function fn(f) {
-    return function () {
-      var a = matchFile.fn[f].apply(null, [x].concat([].slice.call(arguments)));
-      if (f === 'pipe') {
-        x.push.apply(x, a);
-      } else {
-        x.operations.push({
-          name : f,
-          arguments : [].slice.call(arguments)
-        });
-        [].splice.apply(x, [0, x.length].concat(a));
+function getMatch(dir, match) {
+  var files = fs.readdirSync(dir);
+  var list = [];
+
+  files.forEach(function (name) {
+    var filename = path.join(dir, name);
+    var m;
+
+    if (fs.lstatSync(filename).isDirectory()) {
+      list = list.concat(getMatch(filename, match));
+    } else if (match.test(name)) {
+      m = name.match(match);
+
+      if (m.length > 1) {
+        m = m.slice(1);
       }
-      return x;
-    };
-  }
-  x.operations = [];
-  for (var f in matchFile.fn) {
-    x[f] = fn(f);
-  }
-  return matchFile.chain(x, dir, match);
+
+      list.push(filename);
+    }
+  });
+
+  return list;
 }
 
-matchFile.fn = {};
+
+function sort(list) {
+  return list.sort(function (a, b) {
+    // Split
+    var aSplit = a.split('.');
+    var bSplit = b.split('.');
+
+    // Dirname
+    var aDir = path.dirname(a);
+    var bDir = path.dirname(b);
+
+    if (aDir === bDir) {
+      if (path.basename(a) === 'init.js') {
+        return 1;
+      } else if (path.basename(b) === 'init.js') {
+        return -1;
+      } if (aSplit.length !== bSplit.length) {
+        return aSplit.length - bSplit.length;
+      }
+    }
+
+    return a > b ? 1 : -1;
+  });
+}
+
+function matchFile(dir, match) {
+  return sort(getMatch(dir, match));
+}
 
 if (typeof module === 'object') {
   module.exports = matchFile;
