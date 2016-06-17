@@ -2,7 +2,7 @@
   "name": "match-file-utility",
   "title": "Match File",
   "description": "A way to match files which returns an array",
-  "version": "3.3.17",
+  "version": "3.3.18",
   "author": {
     "name": "Sean MacIsaac",
     "email": "seanjmacisaac@gmail.com"
