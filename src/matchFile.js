@@ -36,6 +36,10 @@ function sort(list) {
     var aDir = path.dirname(a);
     var bDir = path.dirname(b);
 
+    // Dirname split
+    var aDSplit = aDir.split(path.sep);
+    var bDSplit = bDir.split(path.sep);
+
     if (aDir === bDir) {
       if (path.basename(a) === 'init.js') {
         return 1;
@@ -44,6 +48,8 @@ function sort(list) {
       } if (aSplit.length !== bSplit.length) {
         return aSplit.length - bSplit.length;
       }
+    } else if (aDSplit.length !== bDSplit.length) {
+      return aDSplit.length - bDSplit.length;
     }
 
     return a > b ? 1 : -1;
