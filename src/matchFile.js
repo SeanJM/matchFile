@@ -1,5 +1,8 @@
-fs = require('fs');
-path = require('path');
+var MATCH_INIT = /^init\.[a-z]+$/;
+var MATCH_EXECUTE = /^exe(cute|)\.[a-z]+$/;
+
+var fs = require('fs');
+var path = require('path');
 
 function getMatch(dir, match) {
   var files = fs.readdirSync(dir);
@@ -40,10 +43,18 @@ function sort(list) {
     var aDSplit = aDir.split(path.sep);
     var bDSplit = bDir.split(path.sep);
 
+    // Base name
+    var aBase = path.basename(a);
+    var bBase = path.basename(b);
+
     if (aDir === bDir) {
-      if (path.basename(a) === 'init.js') {
+      if (MATCH_INIT.test(aBase)) {
+        return -1;
+      } else if (MATCH_INIT.test(bBase)) {
         return 1;
-      } else if (path.basename(b) === 'init.js') {
+      } else if (MATCH_EXECUTE.test(aBase)) {
+        return 1;
+      } else if (MATCH_EXECUTE.test(bBase)) {
         return -1;
       } if (aSplit.length !== bSplit.length) {
         return aSplit.length - bSplit.length;
