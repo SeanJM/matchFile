@@ -1,5 +1,6 @@
 var MATCH_INIT = /^init\.[a-z]+$/;
 var MATCH_EXECUTE = /^exe(cute|)\.[a-z]+$/;
+var MATCH_SPLIT = /\.|-/;
 
 var fs = require('fs');
 var path = require('path');
@@ -32,8 +33,8 @@ function getMatch(dir, match) {
 function sort(list) {
   return list.sort(function (a, b) {
     // Split
-    var aSplit = a.split('.');
-    var bSplit = b.split('.');
+    var aSplit = a.split(MATCH_SPLIT);
+    var bSplit = b.split(MATCH_SPLIT);
 
     // Dirname
     var aDir = path.dirname(a);
