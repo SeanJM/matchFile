@@ -51,14 +51,28 @@ function sort(list) {
     if (aDir === bDir) {
       if (MATCH_INIT.test(aBase)) {
         return -1;
-      } else if (MATCH_INIT.test(bBase)) {
+      }
+
+      if (MATCH_INIT.test(bBase)) {
         return 1;
-      } else if (MATCH_EXECUTE.test(aBase)) {
+      }
+
+      if (MATCH_EXECUTE.test(aBase)) {
         return 1;
-      } else if (MATCH_EXECUTE.test(bBase)) {
+      }
+
+      if (MATCH_EXECUTE.test(bBase)) {
         return -1;
-      } if (aSplit.length !== bSplit.length) {
+      }
+
+      if (aSplit.length !== bSplit.length) {
         return aSplit.length - bSplit.length;
+      }
+
+      if (a > b) {
+        return 1;
+      } else {
+        return -1;
       }
     } else if (aDSplit.length !== bDSplit.length) {
       return aDSplit.length - bDSplit.length;
