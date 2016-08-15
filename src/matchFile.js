@@ -1,32 +1,29 @@
-var MATCH_INIT = /^init\.[a-z]+$/;
-var MATCH_EXECUTE = /^exe(cute|)\.[a-z]+$/;
-var MATCH_SPLIT = /\.|-/;
+const MATCH_INIT = /^init\.[a-z]+$/;
+const MATCH_EXECUTE = /^exe(cute|)\.[a-z]+$/;
+const MATCH_SPLIT = /\.|-/;
 
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
 
 function getMatch(dir, match) {
-  var files = fs.readdirSync(dir);
   var list = [];
+  try {
+    fs.readdirSync(dir).forEach(function (name) {
+      var filename = path.join(dir, name);
+      var m;
+      if (fs.lstatSync(filename).isDirectory()) {
+        list = list.concat(getMatch(filename, match));
+      } else if (match.test(name)) {
+        m = name.match(match);
 
-  files.forEach(function (name) {
-    var filename = path.join(dir, name);
-    var m;
+        if (m.length > 1) {
+          m = m.slice(1);
+        }
 
-    if (fs.lstatSync(filename).isDirectory()) {
-      list = list.concat(getMatch(filename, match));
-    } else if (match.test(name)) {
-      m = name.match(match);
-
-      if (m.length > 1) {
-        m = m.slice(1);
+        list.push(filename);
       }
-
-      list.push(filename);
-    }
-  });
-
-  return list;
+    });
+  } catch (err) { } return list;
 }
 
 
